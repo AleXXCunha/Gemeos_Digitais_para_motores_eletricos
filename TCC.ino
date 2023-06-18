@@ -3,14 +3,10 @@ Trabalho de Graduação
 Tema: Gêmeos Digitais para Motores Elétricos
 Aluno: Alexandre Abrahami Pinto da Cunha
 Matrícula: 18/0041169
-Sistema Operacional: Windows 11
 */
 
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
-#include <Wire.h>
 #include <ModbusRTU.h>
 #include <DS18B20.h>
 
@@ -18,19 +14,18 @@ Sistema Operacional: Windows 11
 #define KY038_PIN 4
 #define DS18B20_PIN 5
 
-//Cria um objeto Adafruit_MPU6050 chamado mpu para lidar com o sensor
-Adafruit_MPU6050 mpu;
+Adafruit_MPU6050 mpu; //Cria um objeto Adafruit_MPU6050 chamado mpu para lidar com o sensor
+ModbusRTU mb; 
 DS18B20 temp(DS18B20_PIN); //Definindo o pino de entrada do sensor de temperatura DS18B20
-ModbusRTU mb;
 
 unsigned int valor_anl;
 
 void setup(void) {
   pinMode(KY038_PIN, INPUT); //Definindo o pino de entrada do sensor de som KY-038
 
-  Serial.begin(115200, SERIAL_8N1);
-  mb.begin(&Serial);
-  mb.slave(SLAVE_ID);
+  Serial.begin(115200, SERIAL_8N1); //Inicializa a comunicação serial com uma taxa de transmissão de 115200
+  mb.begin(&Serial); 
+  mb.slave(SLAVE_ID); //Definindo o endereço modbus
   mb.addHreg(0, 0);
   mb.addHreg(1, 0);
   mb.addHreg(2, 0);
@@ -45,8 +40,6 @@ void setup(void) {
   mb.addHreg(12, 0);
   mb.addHreg(13, 0);
   mb.addHreg(14, 0);
-
-  //////////////////////////////////////////////////////////////////////Sensor MPU-6050//////////////////////////////////////////////////////////////////////////////////
 
   mpu.begin(); //Inicializando o sensor MPU-6050
   mpu.setAccelerometerRange(MPU6050_RANGE_2_G); //Definindo a faixa de medição do acelerômetro
@@ -84,7 +77,7 @@ void loop() {
   }
 
   sinal_do_som = sinal_max - sinal_min;
-  int ruido = map(sinal_do_som, 0, 1024, 0, 90);        
+  int ruido = map(sinal_do_som, 0, 1023, 0, 90); //Mapeia a faixa de valores obtidos em decibéis    
 
   //////////////////////////////////////////////////////////////////////Sensor MPU-6050//////////////////////////////////////////////////////////////////////////////////
 
@@ -93,7 +86,7 @@ void loop() {
   mpu.getEvent(&a, &g, &temp); 
   
   //Lendo o valor do acelerômetro no eixo x e convertendo o resultado em 2 inteiros de 16 bits para enviar via protocolo Modbus
-  float acelerometro_x = a.acceleration.x; //For a range of +-2g, we need to divide the raw values by 16384, according to the datasheet
+  float acelerometro_x = a.acceleration.x;
   uint32_t valor_acelerometro_x = *((uint32_t*) &acelerometro_x);
   uint16_t reg_acelerometro_x1 = valor_acelerometro_x >> 16;
   uint16_t reg_acelerometro_x2 = valor_acelerometro_x & reg_acelerometro_x1;
@@ -110,25 +103,25 @@ void loop() {
   uint16_t reg_acelerometro_z1 = valor_acelerometro_z >> 16;
   uint16_t reg_acelerometro_z2 = valor_acelerometro_z & reg_acelerometro_z1;
 
-   //Lendo o valor do acelerômetro no eixo x e convertendo o resultado em 2 inteiros de 16 bits para enviar via protocolo Modbus
+  //Lendo o valor do giroscópio no eixo x e convertendo o resultado em 2 inteiros de 16 bits
   float gyro_x = g.gyro.x;
   uint32_t valor_gyro_x = *((uint32_t*) &gyro_x);
   uint16_t reg_gyro_x1 = valor_gyro_x >> 16;
   uint16_t reg_gyro_x2 = valor_gyro_x & reg_gyro_x1;
 
-  //Lendo o valor do acelerômetro no eixo y e convertendo o resultado em 2 inteiros de 16 bits
+  //Lendo o valor do giroscópio no eixo y e convertendo o resultado em 2 inteiros de 16 bits
   float gyro_y = g.gyro.y;
   uint32_t valor_gyro_y = *((uint32_t*) &gyro_y);
   uint16_t reg_gyro_y1 = valor_gyro_y >> 16;
   uint16_t reg_gyro_y2 = valor_gyro_y & reg_gyro_y1;
 
-  //Lendo o valor do acelerômetro no eixo z e convertendo o resultado em 2 inteiros de 16 bits
+  //Lendo o valor do giroscópio no eixo z e convertendo o resultado em 2 inteiros de 16 bits
   float gyro_z = g.gyro.z;
   uint32_t valor_gyro_z = *((uint32_t*) &gyro_z);
   uint16_t reg_gyro_z1 = valor_gyro_z >> 16;
   uint16_t reg_gyro_z2 = valor_gyro_z & reg_gyro_z1;
 
-  //Organizando o endereço modbus das variáveis  
+  //Armazenando o valor das variáveis nos registradores  
   mb.task();
   mb.Hreg(0, reg_acelerometro_x1);
   mb.Hreg(1, reg_acelerometro_x2);
