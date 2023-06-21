@@ -1609,10 +1609,19 @@
                "limit":2.5,
                "durationType":"SECONDS",
                "duration":0,
-               "alias":"Limite de magnitude de aceleração no eixo X"
+               "alias":"Limite superior de magnitude de aceleração no eixo X"
+            },
+            {
+               "xid":"PED_968383",
+               "type":"LOW_LIMIT",
+               "alarmLevel":"URGENT",
+               "limit":-2.5,
+               "durationType":"SECONDS",
+               "duration":0,
+               "alias":"Limite inferior de magnitude de aceleração no eixo X"
             }
          ],
-         "engineeringUnits":"",
+         "engineeringUnits":"METERS_PER_SECOND_PER_SECOND",
          "chartColour":null,
          "chartRenderer":null,
          "dataSourceXid":"DS_351106",
@@ -1660,7 +1669,16 @@
                "limit":2.5,
                "durationType":"SECONDS",
                "duration":0,
-               "alias":"Limite de magnitude de aceleração no eixo Y"
+               "alias":"Limite superior de magnitude de aceleração no eixo Y"
+            },
+            {
+               "xid":"PED_973466",
+               "type":"LOW_LIMIT",
+               "alarmLevel":"URGENT",
+               "limit":-2.5,
+               "durationType":"SECONDS",
+               "duration":0,
+               "alias":"Limite inferior de magnitude de aceleração no eixo Y"
             }
          ],
          "engineeringUnits":"",
@@ -1711,7 +1729,16 @@
                "limit":12.3,
                "durationType":"SECONDS",
                "duration":0,
-               "alias":"Limite de magnitude de aceleração no eixo Z"
+               "alias":"Limite superior de magnitude de aceleração no eixo Z"
+            },
+            {
+               "xid":"PED_503868",
+               "type":"LOW_LIMIT",
+               "alarmLevel":"URGENT",
+               "limit":7.3,
+               "durationType":"SECONDS",
+               "duration":0,
+               "alias":"Limite inferior de magnitude de aceleração no eixo Z"
             }
          ],
          "engineeringUnits":"",
